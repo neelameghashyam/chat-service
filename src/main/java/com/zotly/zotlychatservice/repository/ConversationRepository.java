@@ -1,8 +1,12 @@
 package com.zotly.zotlychatservice.repository;
 
-import com.zotly.zotlychatservice.entity.Conversation;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.zotly.zotlychatservice.entity.Conversation;
+
+import java.util.List;
+
 public interface ConversationRepository extends JpaRepository<Conversation, Long> {
-    Conversation findByChatToken(String chatToken);
+    List<Conversation> findByStatus(String status);
+    List<Conversation> findByCustomerId(Long customerId);
 }
