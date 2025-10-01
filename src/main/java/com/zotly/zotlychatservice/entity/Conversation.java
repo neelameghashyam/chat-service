@@ -32,7 +32,7 @@ public class Conversation {
     @Enumerated(EnumType.STRING)
     private Status status = Status.ACTIVE;
 
-    @Column(name = "customer_id") // Add this field to match the repository method
+    @Column(name = "customer_id") 
     private Long customerId;
 
     public enum Status {

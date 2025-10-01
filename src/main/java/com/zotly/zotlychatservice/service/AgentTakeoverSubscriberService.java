@@ -5,11 +5,13 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
 import com.zotly.zotlychatservice.entity.AgentTakeover;
 import com.zotly.zotlychatservice.repository.AgentTakeoverRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 
 @Service
+@Profile("!test") // Exclude from test profile
 public class AgentTakeoverSubscriberService {
 
     private final Mqtt5AsyncClient client;
@@ -32,13 +34,11 @@ public class AgentTakeoverSubscriberService {
                         String payload = new String(publish.getPayloadAsBytes());
                         System.out.println("📩 Received MQTT on agent-takeovers topic: " + payload);
 
-                        // Only process if it's a full object (not delete strings); skip if payload is simple string
                         if (payload.startsWith("\"") && payload.endsWith("\"")) {
                             System.out.println("Skipping simple string payload (e.g., delete)");
                             return;
                         }
 
-                        // Convert MQTT payload to AgentTakeover and save
                         AgentTakeover takeover = objectMapper.readValue(payload, AgentTakeover.class);
                         agentTakeoverRepository.save(takeover);
                     } catch (Exception e) {

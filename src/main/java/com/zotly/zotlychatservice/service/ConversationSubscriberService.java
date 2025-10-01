@@ -5,11 +5,13 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
 import com.zotly.zotlychatservice.entity.Conversation;
 import com.zotly.zotlychatservice.repository.ConversationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 
 @Service
+@Profile("!test") // Exclude from test profile
 public class ConversationSubscriberService {
 
     private final Mqtt5AsyncClient client;
@@ -32,13 +34,11 @@ public class ConversationSubscriberService {
                         String payload = new String(publish.getPayloadAsBytes());
                         System.out.println("📩 Received MQTT on conversations topic: " + payload);
 
-                        // Only process if it's a full object (not delete/status strings); skip if payload is simple string
                         if (payload.startsWith("\"") && payload.endsWith("\"")) {
                             System.out.println("Skipping simple string payload (e.g., delete/status)");
                             return;
                         }
 
-                        // Convert MQTT payload to Conversation and save
                         Conversation conversation = objectMapper.readValue(payload, Conversation.class);
                         conversationRepository.save(conversation);
                     } catch (Exception e) {

@@ -1,17 +1,15 @@
 package com.zotly.zotlychatservice;
 
-import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
+import com.zotly.zotlychatservice.config.TestMqttConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
-@ActiveProfiles("test") // Activates test-specific configurations
+@ActiveProfiles("test")
+@Import(TestMqttConfig.class) // Import the test configuration
 class ZotlychatserviceApplicationTests {
-
-    @MockBean // Mocks the MQTT client bean to avoid real connections
-    private Mqtt5AsyncClient mqttClient;
 
     @Test
     void contextLoads() {

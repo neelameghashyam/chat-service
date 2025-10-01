@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
 import com.zotly.zotlychatservice.dto.MessageDTO;
 import com.zotly.zotlychatservice.service.impl.MessageServiceImpl;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 
 @Service
+@Profile("!test") // Exclude from test profile
 public class MessageSubscriberService {
 
     private final Mqtt5AsyncClient client;
@@ -29,7 +31,6 @@ public class MessageSubscriberService {
                         String payload = new String(publish.getPayloadAsBytes());
                         System.out.println("📩 Received MQTT on messages topic: " + payload);
 
-                        // Convert MQTT payload to MessageDTO and save
                         MessageDTO dto = objectMapper.readValue(payload, MessageDTO.class);
                         messageService.create(dto);
                     } catch (Exception e) {
